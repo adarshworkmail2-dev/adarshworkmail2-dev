@@ -1,0 +1,185 @@
+name: Daily Profile Update
+
+on:
+  schedule:
+    # Runs daily at 00:05 UTC (05:35 India Standard Time).
+    - cron: "5 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  update-profile:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out profile repository
+        uses: actions/checkout@v4
+
+      - name: Update daily inspiration
+        run: |
+          python3 <<'PY'
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          messages = [
+              "Every expert was once a beginner. Keep going! 🌱",
+              "Small steps every day lead to big achievements. 🚀",
+              "Stay curious. Keep exploring. Never stop learning. 🧠",
+              "Progress matters more than perfection. ✨",
+              "Make today a little better than yesterday. 🌟",
+              "Dream big, start small, and keep moving forward. 💫",
+              "Consistency turns ordinary days into extraordinary results. 🔥",
+              "Your future is shaped by what you do today. 🌈",
+              "Be proud of how far you've come, and keep moving. 🏔️",
+              "A little progress is still progress. 🌿",
+              "Curiosity is the beginning of every great discovery. 🔎",
+              "Don't wait for the perfect moment. Make the moment count. ⏳",
+              "Keep showing up. Your effort is adding up. 💪",
+              "Great things are built one small step at a time. 🧱",
+              "Learn something today that your future self will thank you for. 📚",
+              "Turn challenges into chances to grow. 🌻",
+              "Be consistent, stay patient, and trust the process. 🛤️",
+              "The best way to predict the future is to create it. 🛠️",
+              "Your only competition is who you were yesterday. 🪞",
+              "Stay humble, stay hungry, and stay curious. ⭐",
+              "Every day is another opportunity to begin again. 🌅",
+              "Ideas become meaningful when you take action. 💡",
+              "Keep your goals clear and your determination stronger. 🎯",
+              "You don't need to know everything to take the next step. 👣",
+              "Make room for learning, experimenting, and growing. 🧪",
+              "Success is the sum of small efforts repeated daily. 🔁",
+              "Be someone who makes things happen. ⚡",
+              "A curious mind can find possibility anywhere. 🌌",
+              "Take the lesson, leave the doubt, and keep moving. 🧭",
+              "Little by little, a little becomes a lot. 🌊",
+              "Focus on the next step, not the whole staircase. 🪜",
+              "Every new skill starts with the courage to try. 🎨",
+              "Keep building a life you're excited to wake up to. ☀️",
+              "Mistakes are proof that you're trying. 🧩",
+              "Choose growth over comfort once in a while. 🌳",
+              "Be patient with yourself. Good things take time. ⌛",
+              "One thoughtful action can change the direction of a day. 🦋",
+              "Stay open to new ideas and unexpected opportunities. 🚪",
+              "The secret is to start before you feel ready. 🚦",
+              "Give your best to today; tomorrow will take care of itself. 🌤️",
+              "Small wins deserve to be celebrated too. 🎉",
+              "Keep your curiosity louder than your fear. 🔊",
+              "A fresh perspective can turn a problem into an opportunity. 🔄",
+              "Your pace is your pace. Keep moving forward. 🚶",
+              "Make learning a habit, not a destination. 📖",
+              "The next great idea might come from today's experiment. 🧠",
+              "Stay focused on what you can improve. 🧰",
+              "Be intentional with your time and generous with your ideas. 🕰️",
+              "Start where you are. Use what you have. Do what you can. 🌱",
+              "Every sunrise brings another chance to make progress. 🌄",
+              "Keep going; the work you're doing matters. 💎",
+              "A positive mindset makes room for positive action. 🌼",
+              "Think boldly, act thoughtfully, and keep learning. 🧭",
+              "Don't measure your journey against someone else's. 🛣️",
+              "The smallest step in the right direction is still a step. 👟",
+              "Create more than you consume. Make more than you scroll. 🧑‍🎨",
+              "Be curious enough to ask questions and brave enough to explore answers. ❓",
+              "Turn your plans into actions, one day at a time. 🗓️",
+              "Every challenge carries a chance to discover your strength. 🪨",
+              "Keep your standards high and your willingness to learn higher. 🏆",
+              "A calm mind and consistent effort can go a long way. 🍃",
+              "Make today count in a way that matters to you. ❤️",
+              "The journey gets easier when you keep taking the next step. 🥾",
+              "Give yourself permission to be a beginner. 🌱",
+              "Good things grow through patience and care. 🌷",
+              "Let your actions be louder than your intentions. 📣",
+              "Stay inspired, stay grounded, and keep moving. 🌍",
+              "You are allowed to grow at your own pace. 🌿",
+              "Be willing to try, learn, adjust, and try again. 🔧",
+              "A new day is a new page. Make it a good one. 📄",
+              "Keep finding reasons to be curious. ✨",
+              "Progress begins when excuses end. 🏁",
+              "Make your next step a meaningful one. 👣",
+              "The habit of learning makes every day an opportunity. 📚",
+              "Be the reason your future self feels grateful. 🙌",
+              "Stay determined. Your effort is never wasted. 💫",
+              "Every accomplishment starts with the decision to try. 🌟",
+              "Build patiently. Improve continuously. Enjoy the journey. 🏗️",
+              "Look for possibilities where others see obstacles. 🔭",
+              "A little courage can open a lot of doors. 🗝️",
+              "Keep asking, keep exploring, keep becoming. 🌠",
+              "Today's effort is tomorrow's foundation. 🧱",
+              "Make time for the things that help you grow. 🌻",
+              "You don't have to be perfect to make a difference. 🤍",
+              "Let curiosity lead you somewhere interesting today. 🧭",
+              "Be consistent enough to see what you're capable of. 🔥",
+              "Every day won't be easy, but every day can teach you something. 🌦️",
+              "Choose progress, even when it feels small. 📈",
+              "Keep your mind open and your momentum alive. 🚀",
+              "The best projects begin with a simple first step. 🛠️",
+              "Trust your ability to learn what you don't know yet. 💡",
+              "Make mistakes, collect lessons, and keep moving. 🧪",
+              "There is always something worthwhile to discover. 🌐",
+              "A thoughtful beginning is better than a perfect plan. 📝",
+              "Let today's actions reflect tomorrow's hopes. 🌅",
+              "Stay curious about the world and kind to yourself. 💜",
+              "You can always begin again with what you know now. 🔄",
+              "Keep making small choices that move you forward. 🧩",
+              "Great journeys are made of ordinary days. 🛤️",
+              "Be present, do your best, and keep growing. 🌱",
+              "Your potential grows when you give it room to grow. 🌳",
+              "Celebrate the progress nobody else can see. 🎊",
+              "Keep learning. Keep creating. Keep being you. ⭐"
+          ]
+
+          today = datetime.now(timezone.utc)
+          message = messages[today.timetuple().tm_yday % len(messages)]
+
+          readme = Path("README.md")
+          content = readme.read_text(encoding="utf-8")
+
+          start = "<!-- DAILY_MESSAGE_START -->"
+          end = "<!-- DAILY_MESSAGE_END -->"
+
+          if start not in content or end not in content:
+              raise SystemExit("README.md is missing the daily message markers.")
+
+          before, remainder = content.split(start, 1)
+          _, after = remainder.split(end, 1)
+
+          updated = (
+              before
+              + start
+              + "\n> "
+              + f"**{today.strftime('%B %d, %Y')}** — {message}\n"
+              + end
+              + after
+          )
+
+          readme.write_text(updated, encoding="utf-8")
+          PY
+
+      - name: Commit and push profile update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add README.md
+
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: daily profile update"
+            git push
+          fi
+
+      - name: Delete previous completed runs of this workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh run list \
+            --workflow daily-update.yml \
+            --limit 100 \
+            --json databaseId,status \
+            --jq '.[] | select(.status == "completed") | .databaseId' |
+          while IFS= read -r run_id; do
+            if [ -n "$run_id" ] && [ "$run_id" != "$GITHUB_RUN_ID" ]; then
+              gh run delete "$run_id" || true
+            fi
+          done
