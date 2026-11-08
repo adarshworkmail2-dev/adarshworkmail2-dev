@@ -17,8 +17,6 @@ I believe in curiosity, creativity, continuous learning, and the idea that there
 > **November 08, 2026** — Progress matters more than perfection. ✨
 <!-- DAILY_MESSAGE_END -->
 
-<sub>🤖 This section updates automatically every day using GitHub Actions.</sub>
-
 ### 📊 My GitHub Journey
 
 ![Profile Views](https://komarev.com/ghpvc/?username=adarshworkmail2-dev&color=blueviolet&style=flat)
